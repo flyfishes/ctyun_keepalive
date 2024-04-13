@@ -1,8 +1,14 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import logging, os,traceback
-import sys,inspect
+import logging
+import sys,os
+try:
+    import inspect
+    _b_pkg_inspect=True
+except ImportError:
+    _b_pkg_inspect=False
+    print("Warning:Not detect package:inspect,please pip3 install inspect")
 
 global g_LOGGER__defaultlogfile,g_LOGGER__
 g_LOGGER__defaultlogfile='ctyun.log'
@@ -61,7 +67,10 @@ class Logger:
         self.modulename = "["+modulename+"]"
 
     def pstack(self, msg="", depth = 0):
-        iLen = len(inspect.stack(0))
+        if(_b_pkg_inspect):
+            iLen = len(inspect.stack(0))
+        else:
+            return msg
         if (iLen > depth and depth>0):
             iLen = depth
         i=1
