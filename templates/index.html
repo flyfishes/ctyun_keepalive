@@ -1,0 +1,18 @@
+<html>
+<head><title>天翼云电脑登录验证码获取</title></head>
+    <meta name="viewport" content="width=device-width" initial-scale="1"/>
+    <style>
+     .box{
+        display:-webkit-flex;
+        display:flex;
+        }
+    </style>
+    <body>
+    <h2>天翼云电脑登录验证码获取</h2>
+    <form action='/ctyuncode' method='POST'>
+      <div class="box">请输入验证码:<input type=text name='code' maxlength=8 size=8>
+      <input type=submit name=submit value='提交'></div>
+      <img src="{{ url_for('static', filename='ctyun.png') }}"" border=0/>
+    </form>
+    </body>
+    </html>
