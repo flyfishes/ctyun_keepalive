@@ -16,10 +16,6 @@ from queue import Queue
 
 import webthread
 
-#微信推送token，访问https://iyuu.cn免费申请
-__g_push_token='你的token999'
-
-
 __g_logger = logger.Logger()
 
 def isNeedDisplay(bMustVirtualDisplay=1):
@@ -31,12 +27,12 @@ def isNeedDisplay(bMustVirtualDisplay=1):
     return 2
 
 
-def pushmsg(title,content):
-    if(__g_push_token==''):return ''
-    url='https://iyuu.cn/'+__g_push_token+'.send?text=%s&desp=%s'%(title,content)
+def pushmsg(push_token,title,content):
+    if(push_token==''):return ''
+    url='https://iyuu.cn/'+push_token+'.send?text=%s&desp=%s'%(title,content)
         
     data = {
-            "token":__g_push_token,
+            "token":push_token,
             "title":title,
             "content":content
         }    
@@ -122,7 +118,7 @@ def keepalive_ctyun2(parms,url="https://pc.ctyun.cn/#/login"):
                     objimg = driver.find_element(By.CLASS_NAME,'code-img')
                     if(obj.get_attribute('value')==''):
                         __g_logger.warn("登录需要验证码!" + objimg.get_attribute('src') )
-                        pushmsg('天翼云电脑保活需要验证码', listen_url)
+                        pushmsg(parms['push_token'],'天翼云电脑保活需要验证码', listen_url)
                         driver.get_screenshot_as_file('static/ctyun.png')
                         if(parms['listenport']>0):
                             try:
@@ -211,14 +207,28 @@ def getDefaultUrl(protocal='http',port=8000,iptype='local'):
 #
                 
 if __name__ == '__main__':
-    #默认参数    
-    parms={'account':'你的天翼云账号',
-           'password':'你的天翼云电脑密码',
+    #my.json默认参数    
+    parms=\
+        {  'account':'',        #你的天翼云账号,必输项
+           'password':'',       #你的天翼云电脑密码,必输项（用"")
            'browserType':'edge',  #edge或者chrome
            'browserPath':'',      #本机edge或chrome浏览器安装路径，默认不需要提供
            'listenport':8000,     #如果=0，则默认键盘输入    
            'listen_url':'',       #监听输入验证码网站地址http://ip:listenport/path,默认为当前局域网http://ip:8000/
-           }
+           'push_token':'',       #微信推送，https://iyuu.cn免费申请token
+        }
+    
+    try:
+        with open(r"my.json",encoding='utf-8') as json_file:
+            parms = json.load(json_file)
+            if ('browserType' not in parms):parms['browserType']='edge'
+            if ('browserPath' not in parms):parms['browserPath']=''
+            if ('listenport'  not in parms):parms['listenport']=8000
+            if ('listen_url'  not in parms):parms['listen_url']=''
+            if ('push_token'  not in parms):parms['push_token']=''
+    except:
+        __g_logger.warn("未发现my.json配置文件，或配置文件格式有误。")
+
     if (len(sys.argv) >= 3 ):
         parms['account'] = sys.argv[1]
         parms['password']= sys.argv[2]
@@ -229,12 +239,11 @@ if __name__ == '__main__':
             parms['browserPath']=sys.argv[4]          
         if(len(sys.argv) > 5):
             parms['listenport']=sys.argv[5]                        
-    else:
+    elif(parms['account']==''  or  parms['password']==''):
         print('Usage: python ctyun-alive.py <account> <"password"> [edge] [edge_path] [listenport]')
         sys.exit(1)
         
     print(parms)
-    #keepalive_ctyun(parms)
              
-    keepalive_ctyun2(parms=parms)
+    ret=keepalive_ctyun2(parms=parms)
     

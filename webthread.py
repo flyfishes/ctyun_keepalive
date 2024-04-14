@@ -30,7 +30,7 @@ def index(name=None):
 
 @app.route('/ctyuncode',methods=['POST'])
 def get_ctyuncode(name=None):
-    global __g_verifyCodeQueue
+    #global __g_verifyCodeQueue
     code=request.form.get('code')
     __g_verifyCodeQueue.put(code)
     print(code)
