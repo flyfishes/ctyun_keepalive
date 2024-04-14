@@ -1,0 +1,8 @@
+{"account":"你的天翼云电脑账号",
+"password":"天翼云电脑密码",
+"browserType":"edge",
+"browserPath":"",    
+"listenport":8000,  
+"listen_url":"",      
+"push_token":"IYUU的token"    
+}
