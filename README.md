@@ -27,6 +27,7 @@ pip3 install  -r requirements.txt<br>
    edge: 浏览器名字（默认为edge，其他字符则chrome）<br>
    browser_exe_path：浏览器可执行文件路径，如果报错找不到路径，则需要指定<br>
    listen_port：web监听端口，默认不用修改8000，如果改为0，则在控制台输入验证码（阻塞模式）<br>
+   以上参数也可以不设置，直接在my.json配置文件更新<br>
    可以设置自动任务，每隔半小时运行一次。<br>
 
 <5>.  运行结果：<br>

@@ -177,7 +177,7 @@ def keepalive_ctyun2(parms,url="https://pc.ctyun.cn/#/login"):
 
     if (isNeedDisplay()==1):
         display.stop()
-    pushmsg('天翼云电脑保活成功',time.asctime())
+    pushmsg(parms['push_token'],'天翼云电脑保活成功',time.asctime())
     return 0
 
 #获取输入验证码网页地址
