@@ -8,15 +8,17 @@ from selenium.webdriver.common.action_chains import ActionChains
 from pyvirtualdisplay import Display
 import time
 import logger
+import logging
 import sys,os
 import json
 import requests
 import threading
 from queue import Queue
+import my_captcha
 
 import webthread
 
-__g_logger = logger.Logger()
+__g_logger = logger.Logger(path="static/ctyun.txt",Flevel=logging.INFO)
 
 def isNeedDisplay(bMustVirtualDisplay=1):
     if (r"linux" in sys.platform):
@@ -108,6 +110,7 @@ def keepalive_ctyun2(parms,url="https://pc.ctyun.cn/#/login"):
         time.sleep(3)
         
         i=0
+        bFoundVercode=False
         while i<len(ctyun_steps):
             step= ctyun_steps[i]
             __g_logger.info("step" + str(i+1) + ":"+ step['name']+",Now url:" +driver.current_url)
@@ -120,10 +123,14 @@ def keepalive_ctyun2(parms,url="https://pc.ctyun.cn/#/login"):
                         __g_logger.warn("登录需要验证码!" + objimg.get_attribute('src') )
                         pushmsg(parms['push_token'],'天翼云电脑保活需要验证码', listen_url)
                         driver.get_screenshot_as_file('static/ctyun.png')
+                        objimg.screenshot("static/verifyCode.png")
+                        bFoundVercode=True
                         if(parms['listenport']>0):
                             try:
-                                verifyCode= verifyCodeQueue.get(block=True,timeout=60)
-                                __g_logger.info('收到验证码:'+verifyCode)
+                                verifyCode=my_captcha.captcha_pic('static/verifyCode.png')
+                                if(verifyCode==None):
+                                    verifyCode= verifyCodeQueue.get(block=True,timeout=60)
+                                __g_logger.info('收到/识别验证码:'+verifyCode)
                             except Exception:
                                 __g_logger.warn("获取验证码超时(60s)")
                                 pass
@@ -146,7 +153,7 @@ def keepalive_ctyun2(parms,url="https://pc.ctyun.cn/#/login"):
                     try:
                         obj = driver.find_element(elem[1],elem[0])
                         if(obj):
-                            __g_logger.debug(f"find {elem[0]}")
+                            __g_logger.debug(f"find {elem[0]}={elem[3]}")
                             if (elem[2]=='send_keys'):
                                 obj.clear()
                                 obj.send_keys( elem[3])
@@ -161,7 +168,7 @@ def keepalive_ctyun2(parms,url="https://pc.ctyun.cn/#/login"):
                         except NoSuchElementException as e:
                             pass
                         
-                        return -2
+                        #return -2
             i=i+1
         #end while step                
 
