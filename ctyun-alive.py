@@ -54,7 +54,8 @@ def keepalive_ctyun2(parms,url="https://pc.ctyun.cn/#/login"):
                                                ['password',By.CLASS_NAME,'send_keys','%CTPASSWORD%'],
                                                ['btn-submit',By.CLASS_NAME,'click','3']]}
                 ,{"name":"Enter YunMachine","elems":[['desktop-main-entry',By.CLASS_NAME,'click','5']]}
-                ,{"name":"Windows login","elems":[['screenContainer',By.CLASS_NAME,'click','15'],
+                ,{"name":"Windows login","elems":[[ "close-ai", "class name", "click", "3" ],
+                                                ['screenContainer',By.CLASS_NAME,'click','15'],
                                                  ['winpassword',"active_element",'send_keys','%WINPASSWORD%']]}
                 ]
     for step in ctyun_steps:
